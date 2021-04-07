@@ -11,6 +11,10 @@ export let environment = key => {
     return canvas.terrain.environment();
 };
 
+export let obstacle = key => {
+    return canvas.terrain.obstacle();
+};
+
 export class TerrainLayer extends PlaceablesLayer {
     constructor() {
         super();
@@ -58,6 +62,17 @@ export class TerrainLayer extends PlaceablesLayer {
             { id: 'mountain', text: 'Mountain' },
             { id: 'swamp', text: 'Swamp' },
             { id: 'underdark', text: 'Underdark' },
+            { id: 'water', text: 'Water' }
+        ];
+    }
+
+    obstacle() {
+        return [
+            { id: '', text: '' },
+            { id: 'crowd', text: 'Crowd' },
+            { id: 'current', text: 'Current' },
+            { id: 'plants', text: 'Plants' },
+            { id: 'rubble', text: 'Rubble' },
             { id: 'water', text: 'Water' }
         ];
     }
@@ -140,12 +155,22 @@ export class TerrainLayer extends PlaceablesLayer {
 
                     let reduce = options.reduce?.find(e => e.id == terrain.environment);
                     if (reduce) {
-                        detail.reduce = reduce;
                         terraincost = reduceFn(terraincost, reduce);
+                        let terraincostEnv = terraincost
                     }
-                    cost = calculateFn(terraincost, cost, terrain);
-                    detail.total = cost;
+                    let costEnv = calculateFn(terraincost, cost, terrain);
 
+                    let reduceObs = options.reduce?.find(e => e.id == terrain.obstacle);
+                    if (reduceObs) {
+                        terraincost = terrain.cost(options);
+                        terraincost = reduceFn(terraincost, reduceObs);
+                        let terraincostObs = terraincost;
+                    }
+                    let costObs = calculateFn(terraincost, cost, terrain);
+
+                    if (reduce || reduceObs) {detail.reduce = Math.min(reduce, reduceObs)}
+                    detail.total = Math.min(costEnv, costObs);
+                    cost = Math.min(costEnv, costObs);
                     details.push(detail);
 
                 }
@@ -155,9 +180,10 @@ export class TerrainLayer extends PlaceablesLayer {
             for (let measure of canvas.templates.placeables) {
                 const testX = (gx + hx) - measure.data.x;
                 const testY = (gy + hy) - measure.data.y;
-                let terraincost = measure.getFlag('enhanced-terrain-layer', 'multiple');													  
+                let terraincost = measure.getFlag('enhanced-terrain-layer', 'multiple');
                 let measType = measure.getFlag('enhanced-terrain-layer', 'terraintype') || 'ground';
                 let measEnv = measure.getFlag('enhanced-terrain-layer', 'environment') || '';
+                let measObs = measure.getFlag('enhanced-terrain-layer', 'obstacle') || '';
                 if (terraincost &&
                     !options.ignore?.includes(measEnv) &&
                     !((measType == 'ground' && elevation > 0) || (measType == 'air' && elevation <= 0)) &&
@@ -166,13 +192,22 @@ export class TerrainLayer extends PlaceablesLayer {
                     let detail = { object: measure, cost: terraincost };
                     let reduce = options.reduce?.find(e => e.id == measEnv);
                     if (reduce) {
-                        detail.reduce = reduce;
                         terraincost = reduceFn(terraincost, reduce);
+                        let terraincostEnv = terraincost;
                     }
+                    costEnv = calculateFn(terraincost, cost, measure);
 
-                    cost = calculateFn(terraincost, cost, measure);
-                    detail.total = cost;
+                    let reduceObs = options.reduce?.find(e => e.id == measObs);
+                    if (reduceObs) {
+                        let terraincost = measure.getFlag('enhanced-terrain-layer', 'multiple');
+                        terraincost = reduceFn(terraincost, reduceObs);
+                        let terraincostObs = terraincost;
+                    }
+                    costObs = calculateFn(terraincost, cost, measure);
 
+                    if (reduce || reduceObs) {detail.reduce = Math.min(reduce, reduceObs)}
+                    detail.total = Math.min(costEnv, costObs);
+                    cost = Math.min(costEnv, costObs);
                     details.push(detail);
 
                 }

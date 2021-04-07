@@ -52,7 +52,8 @@ export class Terrain extends PlaceableObject {
             points: [],
             multiple: this.layer.defaultmultiple,
             terraintype: 'ground',
-            environment: null
+            environment: canvas.scene.data.flags['enhanced-terrain-layer']?.environment || null,
+            obstacle: null
         }
     }
 
@@ -79,6 +80,10 @@ export class Terrain extends PlaceableObject {
         return this.data.environment;
     }
 
+    get obstacle() {
+        return this.data.obstacle;
+    }
+    
     static async create(data, options) {
 
         //super.create(data, options);
@@ -296,7 +301,7 @@ export class Terrain extends PlaceableObject {
 
         // Outer Stroke
         //const colors = CONFIG.Canvas.dispositionColors;
-        let sc = colorStringToHex("#FFFFFF"); //this.data.hidden ? colorStringToHex("#C0C0C0") : 
+        let sc = colorStringToHex("#FFFFFF"); //this.data.hidden ? colorStringToHex("#C0C0C0") :
         let lStyle = new PIXI.LineStyle();
         mergeObject(lStyle, { width: s / 20, color: sc, alpha: 1, cap: PIXI.LINE_CAP.ROUND, join: PIXI.LINE_JOIN.ROUND, visible: true });
         this.drawing.lineStyle(lStyle);
@@ -327,7 +332,7 @@ export class Terrain extends PlaceableObject {
                 this.drawing.drawDashedPolygon(points, 0, 0, 0, 1, 5, 0);
                 lStyle.width = 0;
                 this.drawing.lineStyle(lStyle);
-            } 
+            }
             this.drawing.drawShape(this.shape);
         }
 

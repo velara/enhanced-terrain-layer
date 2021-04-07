@@ -13,6 +13,7 @@
   "EnhancedTerrainLayer.UpdateTerrain": "Update Terrain",
   "EnhancedTerrainLayer.TerrainType": "Terrain Type",
   "EnhancedTerrainLayer.Environment": "Environment",
+  "EnhancedTerrainLayer.Obstacle": "Obstacle",
 
   "EnhancedTerrainLayer.opacity.name": "Terrain Icon Opacity",
   "EnhancedTerrainLayer.opacity.hint": "Opacity of the Icon and Number.",
