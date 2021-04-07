@@ -31,7 +31,7 @@
 	"packs": [],
 	"url" : "https://github.com/ironmonk88/enhanced-terrain-layer",
 	"download" : "https://github.com/velara/enhanced-terrain-layer/archive/1.0.20.zip",
-	"manifest" : "https://github.com/velara/enhanced-terrain-layer/releases/latest/download/module.json",
+	"manifest" : "https://raw.githubusercontent.com/velara/enhanced-terrain-layer/main/module.json",
 	"bugs": "https://github.com/ironmonk88/enhanced-terrain-layer/issues",
 	"allowBugReporter": true,
 	"minimumCoreVersion": "0.7.0",
